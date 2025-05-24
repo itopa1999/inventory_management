@@ -31,7 +31,8 @@ if (is_admin) {
 } else if (is_staff) {
   navContainer.innerHTML = staffNav;
 } else {
-  window.location.href = "auth.html";
+  navContainer.innerHTML = adminNav;
+  // window.location.href = "auth.html";
 }
 
 
