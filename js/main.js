@@ -1,65 +1,93 @@
+let is_admin = false;
+let is_user = false;
 
-const is_admin = localStorage.getItem('is_admin');
-const is_staff = localStorage.getItem('is_staff');
+const token = localStorage.getItem('token');
+
+if (token === null) {
+    window.location.href = "auth.html";
+}
 
 const BASE_URL = "http://127.0.0.1:8000/backend/api";
 
 const navContainer = document.getElementById("navContainer");
+const panelTitle = document.getElementById('panel-title');
 
 const adminNav = `
-    <a class="nav-link" href="admin_index.html"><i class="fas fa-dashboard me-2"></i>Dashboard</a>
+    <a class="nav-link" href="index.html"><i class="fas fa-dashboard me-2"></i>Dashboard</a>
     <a class="nav-link" href="manage.html"><i class="fas fa-boxes me-2"></i>Manage Inventory</a>
     <a class="nav-link" href="request.html"><i class="fas fa-clipboard-check me-2"></i>Manage Requests</a>
     <a class="nav-link" href="reports.html"><i class="fas fa-chart-bar me-2"></i>Generate Reports</a>
     <a class="nav-link" href="notifications.html"><i class="fas fa-bell me-2"></i>Notifications</a>
     <a class="nav-link" href="users.html"><i class="fas fa-users me-2"></i>Manage Users</a>
-    <a class="nav-link id="logoutUser" style="color:rgba(194, 12, 12, 0.95);" text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+    <a class="nav-link" href="#!"><i class="fas fa-key me-2"></i>Change Password</a>
+    <a class="nav-link" id="logoutUser" style="color:rgba(194, 12, 12, 0.95);" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
 `;
 
 const staffNav = `
     <a class="nav-link" href="index.html"><i class="fas fa-dashboard me-2"></i>Dashboard</a>
     <a class="nav-link" href="manage.html"><i class="fas fa-boxes me-2"></i>Manage Inventory</a>
-    <a class="nav-link" href="#"><i class="fas fa-clipboard-check me-2"></i>Approve/Reject Requests</a>
-    <a class="nav-link" href="#"><i class="fas fa-chart-bar me-2"></i>Generate Reports</a>
-    <a class="nav-link" href="#"><i class="fas fa-bell me-2"></i>Notifications</a>
-    <a class="nav-link text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
-
+    <a class="nav-link" href="request.html"><i class="fas fa-clipboard-check me-2"></i>Manage Requests</a>
+    <a class="nav-link" href="reports.html"><i class="fas fa-chart-bar me-2"></i>Generate Reports</a>
+    <a class="nav-link" href="notifications.html"><i class="fas fa-bell me-2"></i>Notifications</a>
+    <a class="nav-link" href="#!"><i class="fas fa-key me-2"></i>Change Password</a>
+    <a class="nav-link" id="logoutUser" style="color:rgba(194, 12, 12, 0.95);" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
 `;
 
-if (is_admin) {
-  navContainer.innerHTML = adminNav;
-} else if (is_staff) {
-  navContainer.innerHTML = staffNav;
-} else {
-  navContainer.innerHTML = adminNav;
-  // window.location.href = "auth.html";
+async function fetchUserProfile() {
+    try {
+        const response = await fetch(`${BASE_URL}/me/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showAlert('error', '❌ ' + (data.error || "❌ Something went wrong! Please try again."));
+            return;
+        }
+
+        document.getElementById('usernameDisplay').textContent = data.username || 'Unknown User';
+        document.getElementById('userProfilePic').src = data.profile_picture || 'default-avatar.png';
+
+        is_admin = data.is_admin;
+        is_user = data.is_user;
+
+
+        if (is_admin) {
+            navContainer.innerHTML = adminNav;
+            panelTitle.textContent = 'Admin Panel';
+        } else if (is_user) {
+            navContainer.innerHTML = staffNav;
+            panelTitle.textContent = 'User Panel';
+        } else {
+            navContainer.innerHTML = staffNav;
+            panelTitle.textContent = 'Anonymous User';
+        }
+
+        // Attach logout listener after nav is rendered
+        const logoutBtn = document.getElementById('logoutUser');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function () {
+                localStorage.removeItem('token');
+                showAlert("success", "✅ Logout successful!");
+                setTimeout(() => {
+                    window.location.href = "auth.html";
+                }, 2000);
+            });
+        }
+
+        // Highlight current nav link
+        highlightCurrentNavLink();
+
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        showAlert('error', "❌ Server is not responding. Please try again later.");
+    }
 }
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    const currentPath = window.location.pathname.split("/").pop();
-    const links = document.querySelectorAll(".nav-link");
-
-    links.forEach(link => {
-      const href = link.getAttribute("href");
-      if (href && href === currentPath) {
-        link.classList.add("active");
-      } else {
-        link.classList.remove("active");
-      }
-    });
-  });
-
-
-document.getElementById('logoutUser').addEventListener('click', function() {
-    RemoveAccessFromLocalStorage()
-    showAlert("success","✅ Logout successful! ")
-    setTimeout(() => {
-        window.location.href = "auth.html";
-    }, 2000);
-});
-
-
 
 function showAlert(type, message) {
     const alertBox = document.getElementById("customAlert");
@@ -68,7 +96,6 @@ function showAlert(type, message) {
 
     alertContent.textContent = message;
 
-    // Apply type-based color
     let bgColor;
     switch (type) {
         case 'success':
@@ -86,10 +113,7 @@ function showAlert(type, message) {
 
     alertProgress.style.background = bgColor;
 
-    // Show alert
     alertBox.classList.add("active");
-
-    // Auto-close after 6 seconds
     setTimeout(closeAlert, 6000);
 }
 
@@ -97,7 +121,19 @@ function closeAlert() {
     document.getElementById("customAlert").classList.remove("active");
 }
 
+function highlightCurrentNavLink() {
+    const currentPath = window.location.pathname.split("/").pop();
+    const links = document.querySelectorAll(".nav-link");
 
+    links.forEach(link => {
+        const href = link.getAttribute("href");
+        if (href && href === currentPath) {
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
+}
 
 function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
@@ -106,5 +142,7 @@ function toggleSidebar() {
     overlay.classList.toggle('active');
 }
 
-// Close sidebar when clicking outside on mobile
 document.querySelector('.sidebar-overlay').addEventListener('click', toggleSidebar);
+
+// ✅ Call on load
+window.addEventListener('load', fetchUserProfile);

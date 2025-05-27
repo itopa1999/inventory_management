@@ -32,6 +32,16 @@
     .btn-danger:hover {
         background: linear-gradient(45deg, #c82333, #bd2130);
     }
+
+    .input-group-text {
+        border-right: none;
+        background-color: #f8f9fa !important;
+    }
+
+    #searchInput {
+        border-left: none;
+    }
+
     </style>
 </head>
 <body>
@@ -45,7 +55,7 @@
             <div class="row">
                 <!-- Sidebar -->
                 <div class="col-lg-3 sidebar">
-                    <h4 class="mb-4 text-center text-primary">Admin Panel</h4>
+                    <h4 id="panel-title" class="mb-4 text-center text-primary"></h4>
                     <nav class="nav flex-column" id="navContainer">
 
                     </nav>
@@ -56,19 +66,33 @@
                     <!-- Header -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h3 class="text-primary"><i class="fas fa-tachometer-alt me-2"></i>Manage Inventory</h3>
-                        <div class="text-muted">Admin</div>
+                        <div class="d-flex align-items-center mb-3">
+                        <img id="userProfilePic" src="" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                        <div class="ms-2">
+                            <div id="usernameDisplay" class="fw-bold"></div>
+                        </div>
+                        </div>
+
                     </div>
 
                     <div class="card p-4 mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4><i class="fas fa-boxes me-2"></i>Manage Inventory</h4>
-                            <button class="btn-dashboard" data-bs-toggle="modal" data-bs-target="#addInventoryModal">
+                            <div class="d-flex gap-2">
+                                <div class="input-group" style="max-width: 300px;">
+                                    <span class="input-group-text bg-transparent">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Search inventory...">
+                                </div>
+                            </div>
+                            <button id="addInventoryBtn" class="btn-dashboard" data-bs-toggle="modal" data-bs-target="#addInventoryModal">
                                 <i class="fas fa-plus me-2"></i>Add New Inventory
                             </button>
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle" id="inventoryTable">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Item Name</th>
@@ -80,49 +104,7 @@
                                 </thead>
                                 <tbody>
                                     <!-- Sample Rows -->
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-laptop me-3 text-primary"></i>
-                                                <span>Dell XPS 15 Laptop</span>
-                                            </div>
-                                        </td>
-                                        <td>25</td>
-                                        <td>
-                                            <span class="badge bg-success">Good</span>
-                                        </td>
-                                        <td>Warehouse A</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary me-2">
-                                                <i class="fas fa-pen"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-chair me-3 text-success"></i>
-                                                <span>Ergonomic Office Chair</span>
-                                            </div>
-                                        </td>
-                                        <td>50</td>
-                                        <td>
-                                            <span class="badge bg-warning">Damaged</span>
-                                        </td>
-                                        <td>Floor 3 Storage</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary me-2">
-                                                <i class="fas fa-pen"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    
 
                                     <!-- Add more rows as needed -->
                                 </tbody>
@@ -248,54 +230,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/manage.js"></script>
     <script>
-    // Modal Handling Script
-    document.addEventListener('DOMContentLoaded', () => {
-        const inventoryModal = new bootstrap.Modal('#inventoryModal');
-        const deleteModal = new bootstrap.Modal('#deleteModal');
-        let currentItemId = null;
-
-        // Handle edit buttons
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Get item data from row
-                const row = btn.closest('tr');
-                document.getElementById('itemId').value = row.dataset.id;
-                document.getElementById('itemName').value = row.dataset.name;
-                document.getElementById('quantity').value = row.dataset.quantity;
-                document.getElementById('condition').value = row.dataset.condition;
-                document.getElementById('location').value = row.dataset.location;
-                document.getElementById('modalTitle').textContent = 'Edit Inventory';
-                document.getElementById('submitText').textContent = 'Update Inventory';
-                inventoryModal.show();
-            });
-        });
-
-        // Handle add button
-        document.getElementById('addInventoryBtn').addEventListener('click', () => {
-            document.getElementById('inventoryForm').reset();
-            document.getElementById('modalTitle').textContent = 'Add New Inventory';
-            document.getElementById('submitText').textContent = 'Add Inventory';
-            inventoryModal.show();
-        });
-
-        // Handle delete confirmation
-        document.getElementById('confirmDelete').addEventListener('click', () => {
-            if(currentItemId) {
-                // Perform delete operation
-                console.log('Deleting item:', currentItemId);
-                deleteModal.hide();
-            }
-        });
-
-        // Handle delete buttons
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                currentItemId = btn.closest('tr').dataset.id;
-                deleteModal.show();
-            });
-        });
-    });
+    
     </script>
 
 </body>

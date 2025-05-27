@@ -79,7 +79,7 @@
             <div class="row">
                 <!-- Sidebar -->
                 <div class="col-lg-3 sidebar">
-                    <h4 class="mb-4 text-center text-primary">Admin Panel</h4>
+                    <h4 id="panel-title" class="mb-4 text-center text-primary"></h4>
                     <nav class="nav flex-column" id="navContainer">
 
                     </nav>
@@ -90,7 +90,12 @@
                     <!-- Header -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h3 class="text-primary"><i class="fas fa-tachometer-alt me-2"></i>Notifications</h3>
-                        <div class="text-muted">Admin</div>
+                        <div class="d-flex align-items-center mb-3">
+                        <img id="userProfilePic" src="" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                        <div class="ms-2">
+                            <div id="usernameDisplay" class="fw-bold"></div>
+                        </div>
+                        </div>
                     </div>
 
                     <div class="card p-4 mb-4">
@@ -186,36 +191,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/notification.js"></script>
     <script>
-    function markAllAsRead() {
-        document.querySelectorAll('.unread').forEach(item => {
-            item.classList.remove('unread');
-        });
-    }
-
-    function handleApprove(btn) {
-        const notification = btn.closest('.notification-item');
-        notification.querySelector('.badge').remove();
-        notification.innerHTML += '<span class="badge bg-success">Approved</span>';
-        notification.classList.remove('unread');
-    }
-
-    function handleReject(btn) {
-        const notification = btn.closest('.notification-item');
-        notification.querySelector('.badge').remove();
-        notification.innerHTML += '<span class="badge bg-danger">Rejected</span>';
-        notification.classList.remove('unread');
-    }
-
-    function handleAcknowledge(btn) {
-        const notification = btn.closest('.notification-item');
-        notification.remove();
-    }
-
-    function loadMoreNotifications() {
-        // Add your load more logic here
-        console.log('Loading more notifications...');
-    }
     </script>
 </body>
 </html>
