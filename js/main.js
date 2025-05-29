@@ -7,7 +7,7 @@ if (token === null) {
     window.location.href = "auth.html";
 }
 
-const BASE_URL = "http://127.0.0.1:8000/backend/api";
+const BASE_URL = "https://lucky1999.pythonanywhere.com/backend/api";
 
 const navContainer = document.getElementById("navContainer");
 const panelTitle = document.getElementById('panel-title');
@@ -19,7 +19,7 @@ const adminNav = `
     <a class="nav-link" href="reports.html"><i class="fas fa-chart-bar me-2"></i>Generate Reports</a>
     <a class="nav-link" href="notifications.html"><i class="fas fa-bell me-2"></i>Notifications</a>
     <a class="nav-link" href="users.html"><i class="fas fa-users me-2"></i>Manage Users</a>
-    <a class="nav-link" href="#!"><i class="fas fa-key me-2"></i>Change Password</a>
+    <a class="nav-link" href="#!changePassword"><i class="fas fa-key me-2"></i>Change Password</a>
     <a class="nav-link" id="logoutUser" style="color:rgba(194, 12, 12, 0.95);" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
 `;
 
@@ -29,7 +29,7 @@ const staffNav = `
     <a class="nav-link" href="request.html"><i class="fas fa-clipboard-check me-2"></i>Manage Requests</a>
     <a class="nav-link" href="reports.html"><i class="fas fa-chart-bar me-2"></i>Generate Reports</a>
     <a class="nav-link" href="notifications.html"><i class="fas fa-bell me-2"></i>Notifications</a>
-    <a class="nav-link" href="#!"><i class="fas fa-key me-2"></i>Change Password</a>
+    <a class="nav-link" href="#!changePassword"><i class="fas fa-key me-2"></i>Change Password</a>
     <a class="nav-link" id="logoutUser" style="color:rgba(194, 12, 12, 0.95);" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
 `;
 
@@ -143,6 +143,109 @@ function toggleSidebar() {
 }
 
 document.querySelector('.sidebar-overlay').addEventListener('click', toggleSidebar);
+
+
+// Add this once, for example, after your navContainer is loaded or in your main.js init function
+
+const modalHtml = `
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="changePasswordForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordLabel">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary w-100">Change Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+// Append modal to body
+document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+
+document.addEventListener('click', function(e) {
+    if (e.target.closest('a[href="#!changePassword"]') && e.target.textContent.includes('Change Password')) {
+        e.preventDefault();
+
+        // Bootstrap 5 modal instance
+        const modalEl = document.getElementById('changePasswordModal');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
+});
+
+document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const currentPassword = this.currentPassword.value.trim();
+    const newPassword = this.newPassword.value.trim();
+    const confirmPassword = this.confirmPassword.value.trim();
+
+    if (newPassword !== confirmPassword) {
+        alert("New passwords do not match!");
+        return;
+    }
+
+
+    // For demo, just close modal and show alert
+    const modalEl = document.getElementById('changePasswordModal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
+
+    fetch(`${BASE_URL}/change-password/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            password: currentPassword,
+            password1: newPassword,
+            password2: confirmPassword
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message) {
+            showAlert('success', '✅ ' + data.message);
+            const modalEl = document.getElementById('changePasswordModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            // Optionally clear form fields
+            this.reset();
+        } else if (data.error) {
+            showAlert('error', '❌ ' + data.error);
+        } else {
+             showAlert('error', '❌ An unexpected error occurred.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Failed to change password. Please try again.");
+         showAlert('error', '❌ Failed to change password. Please try again.');
+    });
+});
+
 
 // ✅ Call on load
 window.addEventListener('load', fetchUserProfile);

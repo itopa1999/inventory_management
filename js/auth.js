@@ -1,6 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-    const BASE_URL = "http://127.0.0.1:8000/backend/api";
+    const BASE_URL = "https://lucky1999.pythonanywhere.com/backend/api";
     document.querySelector(".login-form").addEventListener("submit", async function (e) {
     e.preventDefault();
     const formData = new FormData(this);
