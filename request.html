@@ -77,29 +77,36 @@
                         <div class="col-md-3 mb-3">
                             <div class="card stat-card p-3">
                                 <h5>Total Requests</h5>
-                                <h2>158</h2>
+                                <h2 id="total-orders">0</h2>
                                 <i class="fas fa-clipboard-list fa-2x opacity-50"></i>
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
                             <div class="card stat-card p-3 bg-success">
                                 <h5>Approved</h5>
-                                <h2>92</h2>
+                                <h2 id="total-approves">0</h2>
                                 <i class="fas fa-check-circle fa-2x opacity-50"></i>
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
                             <div class="card stat-card p-3 bg-danger">
                                 <h5>Rejected</h5>
-                                <h2>24</h2>
+                                <h2 id="total-rejected">0</h2>
                                 <i class="fas fa-times-circle fa-2x opacity-50"></i>
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
                             <div class="card stat-card p-3 bg-warning">
                                 <h5>Pending</h5>
-                                <h2>42</h2>
+                                <h2 id="total-pending">0</h2>
                                 <i class="fas fa-clock fa-2x opacity-50"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card stat-card p-3 bg-secondary">
+                                <h5>Returned</h5>
+                                <h2 id="total-returned">0</h2>
+                                <i class="fas fa-undo fa-2x opacity-50"></i>
                             </div>
                         </div>
                     </div>
@@ -121,6 +128,11 @@
                                 <i class="fas fa-times-circle me-2"></i>Rejected
                             </button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="returned-tab" data-bs-toggle="tab" data-bs-target="#returned" type="button">
+                                <i class="fas fa-times-undo me-2"></i>Returned
+                            </button>
+                        </li>
                     </ul>
 
                     <!-- Tab Content -->
@@ -135,25 +147,12 @@
                                             <th>Item</th>
                                             <th>Quantity</th>
                                             <th>Request Date</th>
+                                            <th>Returning Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>John Doe</td>
-                                            <td>Dell XPS 15 Laptop</td>
-                                            <td>2</td>
-                                            <td>2023-08-15</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-success me-2">
-                                                    <i class="fas fa-check"></i> Approve
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-times"></i> Reject
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <!-- More rows -->
+
                                     </tbody>
                                 </table>
                             </div>
@@ -168,18 +167,11 @@
                                             <th>Requester</th>
                                             <th>Item</th>
                                             <th>Quantity</th>
-                                            <th>Approval Date</th>
                                             <th>Status</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Jane Smith</td>
-                                            <td>Ergonomic Chair</td>
-                                            <td>1</td>
-                                            <td>2023-08-14</td>
-                                            <td><span class="badge bg-success">Approved</span></td>
-                                        </tr>
                                         <!-- More rows -->
                                     </tbody>
                                 </table>
@@ -195,18 +187,30 @@
                                             <th>Requester</th>
                                             <th>Item</th>
                                             <th>Quantity</th>
-                                            <th>Rejection Date</th>
-                                            <th>Reason</th>
+                                            <th>status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <!-- More rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Returned Requests -->
+                        <div class="tab-pane fade" id="returned">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
                                         <tr>
-                                            <td>Mike Johnson</td>
-                                            <td>Projector</td>
-                                            <td>1</td>
-                                            <td>2023-08-13</td>
-                                            <td><span class="badge bg-danger">Insufficient stock</span></td>
+                                            <th>Requester</th>
+                                            <th>Item</th>
+                                            <th>Quantity</th>
+                                            <th>Returned Date</th>
+                                            <th>status</th>
                                         </tr>
+                                    </thead>
+                                    <tbody>
                                         <!-- More rows -->
                                     </tbody>
                                 </table>

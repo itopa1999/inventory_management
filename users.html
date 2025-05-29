@@ -105,11 +105,8 @@
                         <table class="table table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th>User</th>
-                                    <th>Email</th>
+                                    <th>Username</th>
                                     <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Last Active</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -154,35 +151,12 @@
                             <div class="modal-body">
                                 <form id="userForm">
                                     <div class="mb-3">
-                                        <label class="form-label">Full Name</label>
-                                        <input type="text" class="form-control" required>
+                                        <label class="form-label">Username</label>
+                                        <input type="text" name="username" class="form-control" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Role</label>
-                                        <select class="form-select" required>
-                                            <option value="admin">Administrator</option>
-                                            <option value="manager">Inventory Manager</option>
-                                            <option value="staff">Staff Member</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Status</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="status" id="active" checked>
-                                            <label class="form-check-label" for="active">
-                                                Active
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="status" id="inactive">
-                                            <label class="form-check-label" for="inactive">
-                                                Inactive
-                                            </label>
-                                        </div>
+                                        <label class="form-label">Password</label>
+                                        <input type="password" name="password" class="form-control" required>
                                     </div>
                                     <button type="submit" class="btn-dashboard w-100">
                                         <i class="fas fa-save me-2"></i>Save User
