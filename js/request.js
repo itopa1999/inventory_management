@@ -29,30 +29,41 @@ async function fetchData() {
         showAlert('error', "❌ Server is not responding. Please try again later.");
     }
 }
-
-function displayData(data)
-{
-    console.log(data)
+function displayData(data) {
+    console.log(data);
     document.getElementById('total-orders').innerHTML = data.total_orders || 0;
     document.getElementById('total-approves').innerHTML = data.status_counts.approved || 0;
-    document.getElementById('total-rejected').innerHTML = data.status_counts.rejected|| 0;
+    document.getElementById('total-rejected').innerHTML = data.status_counts.rejected || 0;
     document.getElementById('total-pending').innerHTML = data.status_counts.pending || 0;
     document.getElementById('total-returned').innerHTML = data.status_counts.returned || 0;
 
-    ['pending', 'approved', 'rejected', 'returned'].forEach(id => {
+    const statuses = ['pending', 'approved', 'rejected', 'returned'];
+
+    // Clear all tbody content first
+    statuses.forEach(id => {
         document.querySelector(`#${id} tbody`).innerHTML = '';
     });
 
-    // Format date to YYYY-MM-DD
     function formatDate(dateStr) {
         if (!dateStr) return '';
         return new Date(dateStr).toISOString().split('T')[0];
     }
 
-    // Loop through orders
+    // Prepare containers for rows per status
+    const rowsByStatus = {
+        pending: '',
+        approved: '',
+        rejected: '',
+        returned: ''
+    };
+
     data.orders.forEach(order => {
         const { id, requester, inventory, quantity, order_date, returning_date, returned_date, status } = order;
         let rowHTML = '';
+
+        let actionButtonsApprove = '';
+        let actionButtonsReturn = '';
+
         if (is_admin) {
             actionButtonsApprove = `
                 <button class="btn btn-sm btn-success me-2 update-status" data-id="${id}" data-status="approved">
@@ -65,11 +76,10 @@ function displayData(data)
             actionButtonsReturn = `
                 <button class="btn btn-sm text-white btn-info me-2 update-status" data-id="${id}" data-status="returned">
                     <i class="fas fa-undo"></i> Returned
-                </button>`
-            } else if (is_user) {
-            actionButtonsApprove = "";
-            actionButtonsReturn = "";
+                </button>
+            `;
         }
+
         if (status === 'pending') {
             rowHTML = `
                 <tr>
@@ -78,11 +88,9 @@ function displayData(data)
                     <td>${quantity}</td>
                     <td>${formatDate(order_date)}</td>
                     <td>${formatDate(returning_date)}</td>
-                    <td>
-                    ${actionButtonsApprove}
-                    </td>
-
-                </tr>`;
+                    <td>${actionButtonsApprove}</td>
+                </tr>
+            `;
         } else if (status === 'approved') {
             rowHTML = `
                 <tr>
@@ -90,11 +98,9 @@ function displayData(data)
                     <td>${inventory}</td>
                     <td>${quantity}</td>
                     <td><span class="badge bg-success">Approved</span></td>
-                    <td>
-                        ${actionButtonsReturn}
-                    </td>
-
-                </tr>`;
+                    <td>${actionButtonsReturn}</td>
+                </tr>
+            `;
         } else if (status === 'rejected') {
             rowHTML = `
                 <tr>
@@ -102,21 +108,40 @@ function displayData(data)
                     <td>${inventory}</td>
                     <td>${quantity}</td>
                     <td><span class="badge bg-danger">Rejected</span></td>
-                </tr>`;
+                </tr>
+            `;
         } else if (status === 'returned') {
             rowHTML = `
                 <tr>
                     <td>${requester}</td>
                     <td>${inventory}</td>
                     <td>${quantity}</td>
-                    <td>${returned_date ? formatDate(returned_date) : 'null'}</td>
+                    <td>${returned_date ? formatDate(returned_date) : 'N/A'}</td>
                     <td><span class="badge bg-info">Returned</span></td>
-                </tr>`;
+                </tr>
+            `;
         }
 
-        document.querySelector(`#${status} tbody`).innerHTML += rowHTML;
+        rowsByStatus[status] += rowHTML;
+    });
+
+    // Insert rows or "No orders" message if empty
+    statuses.forEach(status => {
+        const tbody = document.querySelector(`#${status} tbody`);
+        if (rowsByStatus[status]) {
+            tbody.innerHTML = rowsByStatus[status];
+        } else {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-3">
+                        No ${status} orders found.
+                    </td>
+                </tr>
+            `;
+        }
     });
 }
+
 
 
 document.addEventListener('click', function (e) {

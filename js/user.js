@@ -33,7 +33,16 @@ function displayData(data)
 {
     const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";  // Clear existing rows
-
+    if (data.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="text-center text-muted py-4">
+                    No users found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
     data.forEach(user => {
         const tr = document.createElement("tr");
 

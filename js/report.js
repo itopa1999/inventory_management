@@ -36,7 +36,17 @@ function displayData(data)
     const tbody = document.querySelector('#inventoryTable tbody');
     tbody.innerHTML = '';
     const filteredData = data.filter(item => item.status === 'approved' || item.status === 'returned');
-
+    if (filteredData.length === 0) {
+        // Show centered message in the table body spanning all columns
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    No request items available.
+                </td>
+            </tr>
+        `;
+        return; // No need to continue
+    }
     filteredData.forEach(item => {
         const row = document.createElement('tr');
 

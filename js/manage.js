@@ -34,7 +34,17 @@ function displayData(data)
     console.log(data)
     const tbody = document.querySelector('#inventoryTable tbody');
     tbody.innerHTML = ''; // Clear previous rows
-
+    if (data.length === 0) {
+        // Show centered message in the table body spanning all columns
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    No inventory items available.
+                </td>
+            </tr>
+        `;
+        return; // No need to continue
+    }
     data.forEach(item => {
         const iconClass = getCategoryIcon(item.category);
         const conditionBadge = getConditionBadge(item.condition);

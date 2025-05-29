@@ -44,24 +44,32 @@ function renderRecentItems(items) {
     const container = document.getElementById('recent-items-container');
     container.innerHTML = ''; 
 
-    items.forEach(item => {
-        const iconClass = getCategoryIcon(item.category);
-        const timeAgo = getTimeAgo(item.created_at);
-        const itemHTML = `
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <i class="fas ${iconClass} me-3 fs-5"></i>
-                    <div>
-                        <h6 class="mb-0">${item.name}</h6>
-                        <small class="text-muted">${item.category} - Qty: ${item.quantity}</small>
+    if (items.length === 0) {
+    container.innerHTML = `
+        <div class="text-center text-muted py-4">
+            No items available.
+        </div>
+    `;
+    } else {
+        container.innerHTML = ''; // clear previous content
+        items.forEach(item => {
+            const iconClass = getCategoryIcon(item.category);
+            const timeAgo = getTimeAgo(item.created_at);
+            const itemHTML = `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="fas ${iconClass} me-3 fs-5"></i>
+                        <div>
+                            <h6 class="mb-0">${item.name}</h6>
+                            <small class="text-muted">${item.category} - Qty: ${item.quantity}</small>
+                        </div>
                     </div>
+                    <small class="text-muted">${timeAgo}</small>
                 </div>
-                <small class="text-muted">${timeAgo}</small>
-            </div>
-        `;
-
-        container.insertAdjacentHTML('beforeend', itemHTML);
-    });
+            `;
+            container.insertAdjacentHTML('beforeend', itemHTML);
+        });
+    }
 }
 
 function getCategoryIcon(category) {

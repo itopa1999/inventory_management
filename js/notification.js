@@ -30,11 +30,18 @@ async function fetchData() {
         showAlert('error', "❌ Server is not responding. Please try again later.");
     }
 }
-
-function displayData(data)
-{
+function displayData(data) {
     const listGroup = document.querySelector('.list-group');
-    listGroup.innerHTML = '';
+    listGroup.innerHTML = ''; // Clear previous notifications
+
+    if (data.length === 0) {
+        listGroup.innerHTML = `
+            <div class="text-center text-muted py-4" style="width: 100%;">
+                No notification items available.
+            </div>
+        `;
+        return; // No need to continue
+    }
 
     data.forEach(notif => {
         const div = document.createElement('div');
@@ -56,6 +63,7 @@ function displayData(data)
         listGroup.appendChild(div);
     });
 }
+
 
 
 
